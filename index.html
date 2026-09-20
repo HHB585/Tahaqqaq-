@@ -506,7 +506,7 @@
         throw error;
       }
 
-      if (!data || data.length === 0) {
+      if (!data || data.length === 0 || data[0].result_type === "not_found") {
 
         showNotFound();
 
@@ -556,59 +556,133 @@
 
   function showResult(entity) {
 
-    let statusClass = "green";
+  let statusClass = "green";
+  let statusText = "✓ الجهة موجودة في السجل";
 
-    let statusText = "✓ الجهة موجودة في السجل";
+  if (entity.result_type === "domain_match") {
 
-    if (entity.result_type === "domain_match") {
+    statusClass = "green";
+    statusText = "✓ الموقع الرسمي مطابق";
 
-  statusClass = "green";
-  statusText = "✓ الموقع الرسمي مطابق";
+  } else if (entity.result_type === "domain_not_match") {
+
+    statusClass = "yellow";
+    statusText = "⚠ الرابط غير مطابق للموقع الرسمي";
+
+  } else if (entity.result_type === "license_match") {
+
+    statusClass = "green";
+    statusText = "✓ رقم الترخيص موجود";
+
+  } else if (entity.result_type === "name_match") {
+
+    statusClass = "green";
+    statusText = "✓ الجهة موجودة في السجل";
+
+  }
+
+  const activities =
+    Array.isArray(entity.activities)
+      ? entity.activities.join("، ")
+      : "غير متوفر";
+
+  const domains =
+    Array.isArray(entity.official_domains)
+      ? entity.official_domains.join("، ")
+      : "غير متوفر";
+
+  result.innerHTML = `
+
+    <div class="status ${statusClass}">
+      ${statusText}
+    </div>
+
+    <h2>
+      ${escapeHtml(entity.legal_name_ar || "غير متوفر")}
+    </h2>
+
+    <div class="description">
+      ${escapeHtml(entity.legal_name_en || "")}
+    </div>
+
+    <div class="details">
+
+      <div class="detail">
+        <small>الجهة التنظيمية</small>
+        <strong>
+          ${escapeHtml(entity.regulator || "غير متوفر")}
+        </strong>
+      </div>
+
+      <div class="detail">
+        <small>نوع الجهة</small>
+        <strong>
+          ${escapeHtml(entity.entity_type || "غير متوفر")}
+        </strong>
+      </div>
+
+      <div class="detail">
+        <small>حالة الترخيص</small>
+        <strong>
+          ${escapeHtml(entity.license_status || "غير متوفر")}
+        </strong>
+      </div>
+
+      <div class="detail">
+        <small>حالة مزاولة النشاط</small>
+        <strong>
+          ${escapeHtml(entity.practice_status || "غير متوفر")}
+        </strong>
+      </div>
+
+      <div class="detail">
+        <small>رقم الترخيص</small>
+        <strong>
+          ${escapeHtml(entity.license_number || "غير متوفر")}
+        </strong>
+      </div>
+
+      <div class="detail">
+        <small>النشاط</small>
+        <strong>
+          ${escapeHtml(activities)}
+        </strong>
+      </div>
+
+      <div class="detail">
+        <small>النطاقات الرسمية المسجلة</small>
+        <strong>
+          ${escapeHtml(domains)}
+        </strong>
+      </div>
+
+    </div>
+
+    <div class="links">
+
+      ${
+        entity.source_url
+          ? `
+            <a
+              href="${escapeAttribute(entity.source_url)}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              المصدر الرسمي
+            </a>
+          `
+          : ""
+      }
+
+    </div>
+
+  `;
 
 }
-
-else if (entity.result_type === "domain_not_match") {
-
-  statusClass = "yellow";
-  statusText = "⚠ الرابط غير مطابق للموقع الرسمي";
-
-}
-
-else if (entity.result_type === "license_match") {
-
-  statusClass = "green";
-  statusText = "✓ رقم الترخيص موجود";
-
-}
-
-else if (entity.result_type === "name_match") {
-
-  statusClass = "green";
-  statusText = "✓ الجهة موجودة في السجل";
-
-}
-
-    }
-
-    else if (entity.result_type === "license_match") {
-
-      statusClass = "green";
-      statusText = "✓ رقم الترخيص موجود";
-
-    }
-
-    else if (entity.result_type === "name_match") {
-
-      statusClass = "green";
-      statusText = "✓ الجهة موجودة في السجل";
-
-    }
-
-
-    const activities =
-      Array.isArray(entity.activities)
-        ? entity.activities.join("، ")
-        : "غير متوفر";
+      const activities =
+  Array.isArray(entity.activities)
+    ? entity.activities.join("، ")
+    : "غير متوفر";
 
 
     const domains =
