@@ -355,7 +355,7 @@
   </form>
 
   <div class="examples">
-    جرّبي:
+    جرب:
     <button type="button" onclick="useExample('مصرف الراجحي')">
       مصرف الراجحي
     </button>
@@ -564,17 +564,23 @@
     statusClass = "green";
     statusText = "✓ الموقع الرسمي مطابق";
 
-  } else if (entity.result_type === "domain_not_match") {
+  } 
+  
+  else if (entity.result_type === "domain_not_match") {
 
     statusClass = "yellow";
     statusText = "⚠ الرابط غير مطابق للموقع الرسمي";
+  
+  }
+    
+  else if (entity.result_type === "name_match") {
 
-  } else if (entity.result_type === "license_match") {
+  statusClass = "green";
+  statusText = "✓ الجهة موجودة في السجل";
 
-    statusClass = "green";
-    statusText = "✓ رقم الترخيص موجود";
+  }
 
-  } else if (entity.result_type === "name_match") {
+else if (entity.result_type === "license_match") {
 
     statusClass = "green";
     statusText = "✓ الجهة موجودة في السجل";
