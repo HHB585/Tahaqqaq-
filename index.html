@@ -562,8 +562,31 @@
 
     if (entity.result_type === "domain_match") {
 
-      statusClass = "green";
-      statusText = "✓ الموقع الرسمي مطابق";
+  statusClass = "green";
+  statusText = "✓ الموقع الرسمي مطابق";
+
+}
+
+else if (entity.result_type === "domain_not_match") {
+
+  statusClass = "yellow";
+  statusText = "⚠ الرابط غير مطابق للموقع الرسمي";
+
+}
+
+else if (entity.result_type === "license_match") {
+
+  statusClass = "green";
+  statusText = "✓ رقم الترخيص موجود";
+
+}
+
+else if (entity.result_type === "name_match") {
+
+  statusClass = "green";
+  statusText = "✓ الجهة موجودة في السجل";
+
+}
 
     }
 
