@@ -1,1 +1,768 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <title>تحقّق | تحقق من الجهات المالية</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      background: #f7f9f8;
+      color: #15221d;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e8eeeb;
+      padding: 18px 20px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      font-size: 25px;
+      font-weight: 800;
+      color: #16824b;
+    }
+
+    .saudi {
+      background: #e4f6eb;
+      color: #16824b;
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .hero {
+      max-width: 900px;
+      margin: 70px auto 30px;
+      padding: 0 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(36px, 7vw, 62px);
+      line-height: 1.1;
+      letter-spacing: -1px;
+    }
+
+    .hero h1 span {
+      color: #16824b;
+    }
+
+    .hero p {
+      color: #66736d;
+      font-size: 18px;
+      line-height: 1.8;
+      margin: 20px auto 30px;
+      max-width: 650px;
+    }
+
+    .search-box {
+      max-width: 720px;
+      margin: auto;
+      background: white;
+      padding: 10px;
+      border-radius: 18px;
+      border: 1px solid #e0e8e4;
+      box-shadow: 0 10px 30px rgba(20, 50, 35, 0.06);
+      display: flex;
+      gap: 10px;
+    }
+
+    .search-box input {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      padding: 15px;
+      font-size: 16px;
+      background: transparent;
+      direction: rtl;
+    }
+
+    .search-box button {
+      border: 0;
+      background: #16824b;
+      color: white;
+      padding: 0 24px;
+      border-radius: 13px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .search-box button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .examples {
+      margin-top: 15px;
+      color: #66736d;
+      font-size: 13px;
+    }
+
+    .examples button {
+      border: 0;
+      background: transparent;
+      color: #16824b;
+      cursor: pointer;
+      font-weight: 700;
+      margin: 4px;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 30px auto 80px;
+      padding: 0 20px;
+    }
+
+    .result {
+      display: none;
+      background: white;
+      border: 1px solid #e3ebe7;
+      border-radius: 22px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(20, 50, 35, 0.05);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 20px;
+      padding: 8px 13px;
+      font-weight: 800;
+      font-size: 14px;
+      margin-bottom: 15px;
+    }
+
+    .status.green {
+      background: #e4f6eb;
+      color: #16824b;
+    }
+
+    .status.yellow {
+      background: #fff4d8;
+      color: #a56a00;
+    }
+
+    .status.red {
+      background: #fde8e8;
+      color: #c53232;
+    }
+
+    .result h2 {
+      margin: 5px 0 8px;
+      font-size: 28px;
+    }
+
+    .description {
+      color: #66736d;
+      line-height: 1.7;
+      margin-bottom: 22px;
+    }
+
+    .details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .detail {
+      background: #f7f9f8;
+      padding: 15px;
+      border-radius: 13px;
+    }
+
+    .detail small {
+      display: block;
+      color: #78847f;
+      margin-bottom: 5px;
+    }
+
+    .detail strong {
+      display: block;
+      line-height: 1.5;
+    }
+
+    .links {
+      margin-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .links a {
+      color: #16824b;
+      text-decoration: none;
+      background: #e4f6eb;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .not-found {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .not-found h2 {
+      margin-bottom: 8px;
+    }
+
+    .not-found p {
+      color: #66736d;
+      line-height: 1.8;
+    }
+
+    .how {
+      margin-top: 70px;
+    }
+
+    .how h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .step {
+      background: white;
+      border: 1px solid #e3ebe7;
+      border-radius: 18px;
+      padding: 22px;
+    }
+
+    .step-number {
+      width: 35px;
+      height: 35px;
+      display: grid;
+      place-items: center;
+      background: #e4f6eb;
+      color: #16824b;
+      border-radius: 50%;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .step h3 {
+      margin: 0 0 8px;
+    }
+
+    .step p {
+      color: #66736d;
+      line-height: 1.7;
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .disclaimer {
+      margin-top: 35px;
+      background: #fff9e9;
+      border: 1px solid #f2dfaa;
+      border-radius: 15px;
+      padding: 16px;
+      color: #705a25;
+      line-height: 1.7;
+      font-size: 13px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      color: #89948f;
+      font-size: 13px;
+    }
+
+    @media (max-width: 650px) {
+      .search-box {
+        flex-direction: column;
+      }
+
+      .search-box button {
+        height: 50px;
+      }
+
+      .details,
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        margin-top: 45px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">تحقّق</div>
+    <div class="saudi">🇸🇦 السعودية</div>
+  </div>
+</header>
+
+<section class="hero">
+
+  <h1>
+    قبل ما تثق، <span>تحقّق.</span>
+  </h1>
+
+  <p>
+    تحقق من الجهات المالية والمواقع الإلكترونية
+    واعرف هل الجهة موجودة ضمن البيانات التي نتحقق منها.
+  </p>
+
+  <form class="search-box" id="searchForm">
+
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="اسم الجهة أو الصق الرابط أو رقم الترخيص"
+      autocomplete="off"
+    >
+
+    <button id="searchButton" type="submit">
+      تحقق
+    </button>
+
+  </form>
+
+  <div class="examples">
+    جرّبي:
+    <button type="button" onclick="useExample('مصرف الراجحي')">
+      مصرف الراجحي
+    </button>
+
+    <button type="button" onclick="useExample('بنك الرياض')">
+      بنك الرياض
+    </button>
+
+    <button type="button" onclick="useExample('alinma.com')">
+      alinma.com
+    </button>
+  </div>
+
+</section>
+
+
+<main>
+
+  <section id="result" class="result"></section>
+
+
+  <section class="how">
+
+    <h2>كيف نتحقق؟</h2>
+
+    <div class="steps">
+
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>ابحث</h3>
+        <p>
+          اكتب اسم الجهة أو الصق رابط الموقع أو رقم الترخيص.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>نطابق</h3>
+        <p>
+          نقارن البيانات مع الجهات المسجلة في قاعدة البيانات.
+        </p>
+      </div>
+
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>تحقق</h3>
+        <p>
+          تظهر لك نتيجة البحث والبيانات المتوفرة عن الجهة.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="disclaimer">
+      تنبيه: ظهور الجهة أو عدم ظهورها هنا لا يُعد بحد ذاته حكمًا نهائيًا
+      على موثوقيتها. تحقّق دائمًا من المصدر الرسمي للجهة التنظيمية قبل
+      تحويل الأموال أو مشاركة بياناتك.
+    </div>
+
+  </section>
+
+</main>
+
+
+<footer>
+  تحقّق © 2026
+</footer>
+
+
+<script>
+
+  /*
+    ==========================================
+    SUPABASE SETTINGS
+    ==========================================
+  */
+
+  const SUPABASE_URL =
+    "https://bfxgdxzuythmtfajizts.supabase.co";
+
+  const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_NMmX0Ccfzo9dieHkKI0D3A_o9I47fLr";
+
+
+  /*
+    ==========================================
+    CONNECT TO SUPABASE
+    ==========================================
+  */
+
+  const supabaseClient =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+  /*
+    ==========================================
+    SEARCH
+    ==========================================
+  */
+
+  const form =
+    document.getElementById("searchForm");
+
+  const input =
+    document.getElementById("searchInput");
+
+  const button =
+    document.getElementById("searchButton");
+
+  const result =
+    document.getElementById("result");
+
+
+  form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    const value = input.value.trim();
+
+    if (!value) {
+      input.focus();
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = "جاري التحقق...";
+
+    result.style.display = "block";
+
+    result.innerHTML = `
+      <div style="text-align:center;padding:25px">
+        جاري التحقق...
+      </div>
+    `;
+
+    try {
+
+      const { data, error } =
+        await supabaseClient
+          .rpc("verify_entity", {
+            input: value
+          });
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data || data.length === 0) {
+
+        showNotFound();
+
+      } else {
+
+        showResult(data[0]);
+
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      result.innerHTML = `
+        <div class="not-found">
+
+          <div class="status red">
+            حدث خطأ
+          </div>
+
+          <h2>
+            تعذر إجراء التحقق
+          </h2>
+
+          <p>
+            تأكدي من اتصال الموقع بقاعدة البيانات ثم حاولي مرة أخرى.
+          </p>
+
+        </div>
+      `;
+
+    } finally {
+
+      button.disabled = false;
+      button.textContent = "تحقق";
+
+    }
+
+  });
+
+
+  /*
+    ==========================================
+    SHOW RESULT
+    ==========================================
+  */
+
+  function showResult(entity) {
+
+    let statusClass = "green";
+
+    let statusText = "✓ الجهة موجودة في السجل";
+
+    if (entity.result_type === "domain_match") {
+
+      statusClass = "green";
+      statusText = "✓ الموقع الرسمي مطابق";
+
+    }
+
+    else if (entity.result_type === "license_match") {
+
+      statusClass = "green";
+      statusText = "✓ رقم الترخيص موجود";
+
+    }
+
+    else if (entity.result_type === "name_match") {
+
+      statusClass = "green";
+      statusText = "✓ الجهة موجودة في السجل";
+
+    }
+
+
+    const activities =
+      Array.isArray(entity.activities)
+        ? entity.activities.join("، ")
+        : "غير متوفر";
+
+
+    const domains =
+      Array.isArray(entity.official_domains)
+        ? entity.official_domains.join("، ")
+        : "غير متوفر";
+
+
+    result.innerHTML = `
+
+      <div class="status ${statusClass}">
+        ${statusText}
+      </div>
+
+      <h2>
+        ${escapeHtml(entity.legal_name_ar || "غير متوفر")}
+      </h2>
+
+      <div class="description">
+        ${escapeHtml(entity.legal_name_en || "")}
+      </div>
+
+      <div class="details">
+
+        <div class="detail">
+          <small>الجهة التنظيمية</small>
+          <strong>
+            ${escapeHtml(entity.regulator || "غير متوفر")}
+          </strong>
+        </div>
+
+        <div class="detail">
+          <small>نوع الجهة</small>
+          <strong>
+            ${escapeHtml(entity.entity_type || "غير متوفر")}
+          </strong>
+        </div>
+
+        <div class="detail">
+          <small>حالة الترخيص</small>
+          <strong>
+            ${escapeHtml(entity.license_status || "غير متوفر")}
+          </strong>
+        </div>
+
+        <div class="detail">
+          <small>حالة مزاولة النشاط</small>
+          <strong>
+            ${escapeHtml(entity.practice_status || "غير متوفر")}
+          </strong>
+        </div>
+
+        <div class="detail">
+          <small>رقم الترخيص</small>
+          <strong>
+            ${escapeHtml(entity.license_number || "غير متوفر")}
+          </strong>
+        </div>
+
+        <div class="detail">
+          <small>النشاط</small>
+          <strong>
+            ${escapeHtml(activities)}
+          </strong>
+        </div>
+
+        <div class="detail">
+          <small>النطاقات الرسمية المسجلة</small>
+          <strong>
+            ${escapeHtml(domains)}
+          </strong>
+        </div>
+
+      </div>
+
+      <div class="links">
+
+        ${
+          entity.source_url
+            ? `
+              <a
+                href="${escapeAttribute(entity.source_url)}"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                المصدر الرسمي
+              </a>
+            `
+            : ""
+        }
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+    ==========================================
+    NOT FOUND
+    ==========================================
+  */
+
+  function showNotFound() {
+
+    result.innerHTML = `
+
+      <div class="not-found">
+
+        <div class="status red">
+          لم يتم العثور عليها
+        </div>
+
+        <h2>
+          لم نجد جهة مطابقة
+        </h2>
+
+        <p>
+          لم يتم العثور على جهة مطابقة في البيانات التي تم التحقق منها.
+          هذا لا يعني تلقائيًا أن الجهة احتيالية.
+          تحققي من السجل الرسمي للجهة التنظيمية قبل التعامل معها.
+        </p>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+    ==========================================
+    EXAMPLES
+    ==========================================
+  */
+
+  function useExample(value) {
+
+    input.value = value;
+
+    form.dispatchEvent(
+      new Event("submit")
+    );
+
+  }
+
+
+  /*
+    ==========================================
+    SECURITY
+    ==========================================
+  */
+
+  function escapeHtml(value) {
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+  }
+
+
+  function escapeAttribute(value) {
+
+    return String(value)
+      .replaceAll("&", "&amp;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+
+  }
+
+</script>
+
+</body>
+</html>
