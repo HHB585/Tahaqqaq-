@@ -499,33 +499,30 @@
       let data;
 let error;
 
-const isUnifiedNumber = /^\d{8,15}$/.test(value.trim());
+const resultUnified = await supabaseClient
+  .rpc("verify_unified_number", {
+    input: value
+  });
 
-if (isUnifiedNumber) {
-  const result = await supabaseClient
-    .rpc("verify_unified_number", {
-      input: value
-    });
+if (resultUnified.error) {
+  throw resultUnified.error;
+}
 
-  data = result.data;
-  error = result.error;
-
-  if (data && data.length > 0) {
-    data = data.map(row => ({
-      ...row,
-      result_type: "unified_match"
-    }));
-  }
+if (resultUnified.data && resultUnified.data.length > 0) {
+  data = resultUnified.data.map(row => ({
+    ...row,
+    result_type: "unified_match"
+  }));
+  error = null;
 } else {
-  const result = await supabaseClient
+  const resultLicense = await supabaseClient
     .rpc("verify_entity", {
       input: value
     });
 
-  data = result.data;
-  error = result.error;
+  data = resultLicense.data;
+  error = resultLicense.error;
 }
-
       if (error) {
         throw error;
       }
