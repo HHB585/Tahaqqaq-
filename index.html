@@ -496,11 +496,35 @@
 
     try {
 
-      const { data, error } =
-        await supabaseClient
-          .rpc("verify_entity", {
-            input: value
-          });
+      let data;
+let error;
+
+const isUnifiedNumber = /^\d{8,15}$/.test(value.trim());
+
+if (isUnifiedNumber) {
+  const result = await supabaseClient
+    .rpc("verify_unified_number", {
+      input: value
+    });
+
+  data = result.data;
+  error = result.error;
+
+  if (data && data.length > 0) {
+    data = data.map(row => ({
+      ...row,
+      result_type: "unified_match"
+    }));
+  }
+} else {
+  const result = await supabaseClient
+    .rpc("verify_entity", {
+      input: value
+    });
+
+  data = result.data;
+  error = result.error;
+}
 
       if (error) {
         throw error;
