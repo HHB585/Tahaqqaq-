@@ -531,13 +531,9 @@ if (resultUnified.data && resultUnified.data.length > 0) {
 
   showNotFound();
 
-} else if (data.length === 1) {
+} else if {
 
   showResult(data[0]);
-
-} else {
-
-  showMultipleResults(data);
 
 }
 
@@ -711,52 +707,6 @@ else if (entity.result_type === "license_match") {
 
 }
       
-function showMultipleResults(results) {
-  resultBox.innerHTML = `
-    <div class="result-card">
-      <div class="result-status">
-        <span class="status-dot"></span>
-        <span>تم العثور على ${results.length} جهات</span>
-      </div>
-
-      <h3 style="margin-top:16px;">نتائج البحث</h3>
-
-      <div style="display:grid; gap:12px; margin-top:16px;">
-        ${results.map((item) => `
-          <button
-            type="button"
-            onclick='showResult(${JSON.stringify(item)})'
-            style="
-              width:100%;
-              text-align:right;
-              background:#fff;
-              border:1px solid #dce8e1;
-              border-radius:14px;
-              padding:16px;
-              cursor:pointer;
-            "
-          >
-            <div style="font-weight:800; color:#15221D;">
-              ${item.legal_name_ar || item.legal_name_en || 'جهة مالية'}
-            </div>
-
-            ${
-              item.legal_name_en
-                ? `<div style="margin-top:4px;color:#66736D;font-size:13px;direction:ltr;">
-                    ${item.legal_name_en}
-                  </div>`
-                : ''
-            }
-
-            <div style="margin-top:8px;color:#66736D;font-size:13px;">
-              ${item.entity_type || ''}
-            </div>
-          </button>
-        `).join('')}
-      </div>
-    </div>
-  `;
-}
 
   /*
     ==========================================
